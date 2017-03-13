@@ -25,6 +25,8 @@ import java.util.List;
  * <p>
  * 1. API to upload a file with a few meta-data fields. Persist meta-data in persistence store (In memory DB or file system and store the content on a file system)
  * 2. API to get file meta-data
+ * 3. API to download content stream
+ * 4. API to search for file IDs with a search criterion
  */
 @RestController
 @EnableAutoConfiguration
