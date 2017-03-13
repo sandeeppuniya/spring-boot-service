@@ -2,6 +2,7 @@ package com.example.dao;
 
 import com.example.service.FileData;
 import com.example.service.FileMetadata;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -131,6 +132,39 @@ public class FileStoreDaoImpl implements FileStoreDao {
             }
         }
         return fileMetadatas;
+    }
+
+    /**
+     * Search a stored file in 'file store' by it's file id.
+     *
+     * @param fileId File id
+     * @return List of found FileData objects. Returns empty list if no files found.
+     */
+    public List<FileData> searchFileDataById(String fileId) {
+        String methodName = "searchFileDataById() : Entry";
+        LOG.info(methodName);
+        List<FileData> fileDatas = new ArrayList<FileData>();
+        File[] listOfFiles = getAllFilesFromStoreDirectory();
+        InputStream inputStream = null;
+        for (File file : listOfFiles) {
+            if (!file.isHidden() && file.getName().contains(fileId)) {
+                File[] listOfFile = file.listFiles();
+                for (File file1 : listOfFile) {
+                    if (!file1.getName().equals("metadata.properties")) {
+                        try {
+                            inputStream = new FileInputStream(file1);
+                            FileData fileData = new FileData(IOUtils.toByteArray(inputStream), file1.getName());
+                            fileDatas.add(fileData);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return fileDatas;
     }
 
     /**

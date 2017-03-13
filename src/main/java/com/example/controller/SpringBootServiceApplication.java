@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.service.*;
 import org.apache.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.service.FileData;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
 
@@ -80,6 +82,43 @@ public class SpringBootServiceApplication {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity<List<FileMetadata>>((List<FileMetadata>) fileService.findFileById(fileId, context), httpHeaders, HttpStatus.OK);
+    }
+
+    /**
+     * Returns a stream of the matched FileData object based on the input fileId.
+     *
+     * @param fileId   Input file id to be searched in the file store.
+     * @param response Response stream
+     * @throws IOException Throws IOException when fails to get the output stream from the selected FileMetadata object.
+     */
+    @RequestMapping(value = "/downloadFileStream", method = RequestMethod.GET)
+    public void downloadFileStream(@RequestParam(value = "fileId", required = true) String fileId, HttpServletResponse response) throws IOException {
+        final String methodName = "downloadFileStream() : Entry";
+        LOG.info(methodName);
+
+        List<FileData> fileDatas = (List<FileData>) fileService.findFileData(fileId, context);
+        response.addHeader("Content-disposition", fileDatas.get(0).getFileName());
+        response.setContentType("txt/plain");
+
+        InputStream inputStream = getInputStream(fileDatas.get(0).getFileData());
+        IOUtils.copy(inputStream, response.getOutputStream());
+        response.flushBuffer();
+    }
+
+    /**
+     * Gets the input stream from the matched FileMetadata objects.
+     *
+     * @param fileDataBytes FileData object
+     * @return
+     * @throws IOException
+     */
+    private InputStream getInputStream(byte[] fileDataBytes) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(fileDataBytes);
+        objectOutputStream.flush();
+        objectOutputStream.close();
+        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
     /**

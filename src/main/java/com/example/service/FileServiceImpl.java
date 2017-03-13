@@ -28,7 +28,7 @@ public class FileServiceImpl implements FileService {
      * @throws IOException Throws exception when fails to save the input file.
      */
     public void save(FileData file, ApplicationContext applicationContext) throws IOException {
-        fileStoreDao = (FileStoreDao) applicationContext.getBean("fileStoreDaoImpl");
+        getFileStoreDao(applicationContext);
         fileStoreDao.insert(file);
     }
 
@@ -40,7 +40,7 @@ public class FileServiceImpl implements FileService {
      * @return List of found files matching the input file name.
      */
     public List<FileMetadata> findFile(String fileName, ApplicationContext applicationContext) {
-        fileStoreDao = (FileStoreDao) applicationContext.getBean("fileStoreDaoImpl");
+        getFileStoreDao(applicationContext);
 
         return fileStoreDao.searchByFileName(fileName);
     }
@@ -53,8 +53,31 @@ public class FileServiceImpl implements FileService {
      * @return List of found files matching the input file name.
      */
     public List<FileMetadata> findFileById(String fileId, ApplicationContext applicationContext) {
-        fileStoreDao = (FileStoreDao) applicationContext.getBean("fileStoreDaoImpl");
+        getFileStoreDao(applicationContext);
 
         return fileStoreDao.searchByFileId(fileId);
     }
+
+    /**
+     * Finds a file using file id and returns the file data.
+     *
+     * @param fileId             Input file id
+     * @param applicationContext Application Context
+     * @return
+     */
+    public List<FileData> findFileData(String fileId, ApplicationContext applicationContext) {
+        getFileStoreDao(applicationContext);
+
+        return fileStoreDao.searchFileDataById(fileId);
+    }
+
+    /**
+     * Gets the FileStoreDao bean from the application context.
+     *
+     * @param applicationContext Application Context
+     */
+    private void getFileStoreDao(ApplicationContext applicationContext) {
+        fileStoreDao = (FileStoreDao) applicationContext.getBean("fileStoreDaoImpl");
+    }
+
 }

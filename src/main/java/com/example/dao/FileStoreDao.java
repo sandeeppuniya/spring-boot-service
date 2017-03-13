@@ -27,10 +27,18 @@ public interface FileStoreDao {
     List<FileMetadata> searchByFileName(String fileName);
 
     /**
-     * Search a stored file in 'file store' by it's file name.
+     * Search a stored file in 'file store' by it's file id.
      *
      * @param fileId File id
      * @return List of found FileMetadata objects. Returns empty list if no files found.
      */
     List<FileMetadata> searchByFileId(String fileId);
+
+    /**
+     * Search a stored file in 'file store' by it's file id.
+     *
+     * @param fileId File id
+     * @return List of found FileData objects. Returns empty list if no files found.
+     */
+    List<FileData> searchFileDataById(String fileId);
 }

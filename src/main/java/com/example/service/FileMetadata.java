@@ -1,11 +1,14 @@
 package com.example.service;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * FileMetadata contains the meta data of a file uploaded by the client.
  */
-public class FileMetadata {
+public class FileMetadata implements Serializable {
+
+    private static final long serialVersionUID = 100000000000L;
 
     /**
      * A uniquely identifiable file id.

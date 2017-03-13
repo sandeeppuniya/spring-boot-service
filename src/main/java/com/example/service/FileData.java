@@ -34,6 +34,15 @@ public class FileData extends FileMetadata {
     }
 
     /**
+     * Setter for file data array.
+     *
+     * @param fileData Byte array data
+     */
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
+    }
+
+    /**
      * Getter for filePath
      *
      * @return filePath Path of input file.
