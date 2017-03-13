@@ -64,9 +64,10 @@ public class FileStoreDaoImpl implements FileStoreDao {
      * @return List of found FileMetadata objects. Otherwise, returns empty list.
      */
     public List<FileMetadata> searchByFileName(String fileName) {
+        String methodName = "searchByFileName() : Entry";
+        LOG.info(methodName);
         List<FileMetadata> fileMetadatas = new ArrayList<FileMetadata>();
-        File folder = new File(STORE_DIRECTORY + "/");
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = getAllFilesFromStoreDirectory();
         InputStream inputStream = null;
         for (File file : listOfFiles) {
             if (!file.isHidden()) {
@@ -92,7 +93,43 @@ public class FileStoreDaoImpl implements FileStoreDao {
                 }
             }
         }
+        return fileMetadatas;
+    }
 
+    /**
+     * Search a given input file by the file id.
+     *
+     * @param fileId Input file id.
+     * @return List of found FileMetadata objects. Otherwise, returns empty list.
+     */
+    public List<FileMetadata> searchByFileId(String fileId) {
+        String methodName = "searchByFileId() : Entry";
+        LOG.info(methodName);
+        List<FileMetadata> fileMetadatas = new ArrayList<FileMetadata>();
+        File[] listOfFiles = getAllFilesFromStoreDirectory();
+        InputStream inputStream = null;
+        for (File file : listOfFiles) {
+            if (!file.isHidden() && file.getName().contains(fileId)) {
+                File[] listOfFile = file.listFiles();
+                for (File file1 : listOfFile) {
+                    if (file1.getName().equals("metadata.properties")) {
+                        Properties property = new Properties();
+                        try {
+                            inputStream = new FileInputStream(file1);
+                            property.load(inputStream);
+                            FileMetadata fileMetadata = new FileMetadata();
+                            fileMetadata.setFileId(property.getProperty("fileId"));
+                            fileMetadata.setFileName(property.getProperty("fileName"));
+                            fileMetadatas.add(fileMetadata);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
         return fileMetadatas;
     }
 
@@ -105,6 +142,7 @@ public class FileStoreDaoImpl implements FileStoreDao {
      *
      * @param file Input file to be stored.
      */
+
     public void saveFiledata(FileData file) throws IOException {
         this.storeDirectoryPath = STORE_DIRECTORY;
         createFileDirectory(file);
@@ -119,8 +157,8 @@ public class FileStoreDaoImpl implements FileStoreDao {
      * @param file Input file
      */
     public void saveFileMetadata(FileData file) {
-        String methodName = "saveFileMetadata() : ";
-        System.out.println(methodName + "Entry");
+        String methodName = "saveFileMetadata() : Entry";
+        LOG.info(methodName);
         Properties properties = new Properties();
         properties.setProperty("fileId", file.getFileId());
         properties.setProperty("fileName", file.getFileName());
@@ -197,5 +235,16 @@ public class FileStoreDaoImpl implements FileStoreDao {
         } finally {
             fileOutputStream.close();
         }
+    }
+
+    /**
+     * Gets all the file directories stored under Store Directory.
+     *
+     * @return An array of files
+     */
+    private File[] getAllFilesFromStoreDirectory() {
+        String path = STORE_DIRECTORY + "/";
+        File folder = new File(path);
+        return folder.listFiles();
     }
 }

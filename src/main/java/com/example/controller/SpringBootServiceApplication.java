@@ -73,6 +73,15 @@ public class SpringBootServiceApplication {
         return new ResponseEntity<List<FileMetadata>>((List<FileMetadata>) fileService.findFile(fileName, context), httpHeaders, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/getFileMetadataById", method = RequestMethod.GET)
+    public HttpEntity<List<FileMetadata>> getFileMetadataById(@RequestParam(value = "fileName", required = true) String fileId) {
+        final String methodName = "getFileMetadataById() : Entry";
+        LOG.info(methodName);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        return new ResponseEntity<List<FileMetadata>>((List<FileMetadata>) fileService.findFileById(fileId, context), httpHeaders, HttpStatus.OK);
+    }
+
     /**
      * Main method to deploy the service.
      *

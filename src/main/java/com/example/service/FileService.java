@@ -27,4 +27,13 @@ public interface FileService {
      * @return List of matching files in the file store.
      */
     List<FileMetadata> findFile(String fileName, ApplicationContext applicationContext);
+
+    /**
+     * Finds a given file on the basis of the input file id.
+     *
+     * @param fileId           Input file id
+     * @param applicationContext Application Context
+     * @return List of matching files in the file store.
+     */
+    List<FileMetadata> findFileById(String fileId, ApplicationContext applicationContext);
 }

@@ -44,4 +44,17 @@ public class FileServiceImpl implements FileService {
 
         return fileStoreDao.searchByFileName(fileName);
     }
+
+    /**
+     * Finds a file using the id of the input file.
+     *
+     * @param fileId             Input file id
+     * @param applicationContext Application context object
+     * @return List of found files matching the input file name.
+     */
+    public List<FileMetadata> findFileById(String fileId, ApplicationContext applicationContext) {
+        fileStoreDao = (FileStoreDao) applicationContext.getBean("fileStoreDaoImpl");
+
+        return fileStoreDao.searchByFileId(fileId);
+    }
 }
