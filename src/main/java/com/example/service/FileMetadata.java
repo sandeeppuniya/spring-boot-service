@@ -21,6 +21,11 @@ public class FileMetadata implements Serializable {
     protected String fileName;
 
     /**
+     * Represents the time in milliseconds when the file is uploaded to the API.
+     */
+    protected long creationTime;
+
+    /**
      * Default constructor
      */
     public FileMetadata() {
@@ -71,5 +76,23 @@ public class FileMetadata implements Serializable {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * Getter for creation date
+     *
+     * @return creationTime Creation date
+     */
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    /**
+     * Setter for creation date
+     *
+     * @param creationTime Input creation date
+     */
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 }

@@ -41,4 +41,13 @@ public interface FileStoreDao {
      * @return List of found FileData objects. Returns empty list if no files found.
      */
     List<FileData> searchFileDataById(String fileId);
+
+    /**
+     * Finds all the files added in the file store since the last run of the Scheduler Service.
+     *
+     * @param currentTime    Current time when the job is being run.
+     * @param repeatInterval (in seconds) Frequency of the job run by scheduler service. For current implementation, repeatInterval is set to 1 hour(3600 seconds).
+     * @return List of file data if new files were added since last run of the scheduled job. Otherwise, returns empty list.
+     */
+    List<FileData> getNewAddedFile(long currentTime, int repeatInterval);
 }

@@ -12,12 +12,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.service.FileData;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,10 +29,12 @@ import java.util.List;
  * 2. API to get file meta-data
  * 3. API to download content stream
  * 4. API to search for file IDs with a search criterion
+ * 5. A scheduler to poll for files added in last hour and send an email if files were added.
  */
 @RestController
 @EnableAutoConfiguration
 @ComponentScan
+@EnableScheduling
 public class SpringBootServiceApplication {
 
     private static final String APPLICATION_CONTEXT = "application-context.xml";
@@ -54,11 +58,13 @@ public class SpringBootServiceApplication {
 
         byte[] fileBytes = inputFile.getBytes();
         FileData file = new FileData(fileBytes, inputFile.getOriginalFilename());
+        file.setCreationTime(new Date().getTime());
         fileService.save(file, context);
 
         FileMetadata output = new FileMetadata();
         output.setFileName(file.getFileName());
         output.setFileId(file.getFileId());
+        output.setCreationTime(file.getCreationTime());
 
         return output;
     }

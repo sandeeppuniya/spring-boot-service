@@ -168,6 +168,53 @@ public class FileStoreDaoImpl implements FileStoreDao {
     }
 
     /**
+     * Finds all the files added in the file store since the last run of the Scheduler Service.
+     * The following steps are followed to find the matching files:
+     * 1. Iterate over all the files under STORE_DIRECTORY
+     * 2. In each file, find the metadata.properties file
+     * 3. Calculate the time difference as follows:
+     * time difference = [creationTime(from metadata.properties file) - current system time]
+     * 4. If time difference is less than equal to 1 hour, then the file was added with in last hour.
+     * 5. Return the list of all the files found.
+     *
+     * @param currentTime    Current time when the job is being run.
+     * @param repeatInterval (in seconds) Frequency of the job run by scheduler service. For current implementation, repeatInterval is set to 1 hour(3600 seconds).
+     * @return
+     */
+    public List<FileData> getNewAddedFile(long currentTime, int repeatInterval) {
+        String methodName = "getNewAddedFile() : Entry";
+        LOG.info(methodName);
+
+        List<FileData> fileDatas = new ArrayList<FileData>();
+        File[] listOfFiles = getAllFilesFromStoreDirectory();
+        InputStream inputStream = null;
+        for (File file : listOfFiles) {
+            if (!file.isHidden()) {
+                File[] listOfFile = file.listFiles();
+                for (File file1 : listOfFile) {
+                    if (file1.getName().equals("metadata.properties")) {
+                        FileData fileData = null;
+                        Properties property;
+                        try {
+                            inputStream = new FileInputStream(file1);
+                            property = new Properties();
+                            property.load(inputStream);
+                            fileData = new FileData(IOUtils.toByteArray(inputStream), file1.getName());
+                            fileData.setCreationTime(Long.valueOf(property.getProperty("creationTime")));
+                            if (currentTime - fileData.getCreationTime() <= repeatInterval) {
+                                fileDatas.add(fileData);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return fileDatas;
+    }
+
+    /**
      * Wrapper method to perform the actual load of file data in the file system. The steps involved are as follows:
      * 1. Create the given file directory with in STORE_DIRECTORY created when the FileStoreDaoImpl is initialized
      * during application deployment.
@@ -196,6 +243,7 @@ public class FileStoreDaoImpl implements FileStoreDao {
         Properties properties = new Properties();
         properties.setProperty("fileId", file.getFileId());
         properties.setProperty("fileName", file.getFileName());
+        properties.setProperty("creationTime", String.valueOf(file.getCreationTime()));
         if (file.getFilePath() != null) {
             File file1 = new File(new File(file.getFilePath()), "metadata.properties");
 
