@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * Tests the FileStoreDaoImpl class.
- * Line coverage => 78%
  */
 public class FileStoreDaoImplTest {
 

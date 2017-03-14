@@ -33,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
      * @param emailText Text content sent in the email body.
      * @return simpleMailMessage Constructed email message.
      */
-    private SimpleMailMessage createEmailMessage(String emailText) throws MailException {
+    public SimpleMailMessage createEmailMessage(String emailText) throws MailException {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(SEND_EMAIL_TO);
         simpleMailMessage.setFrom(SEND_EMAIL_FROM);

@@ -16,6 +16,12 @@ public class FileData extends FileMetadata {
     private String filePath;
 
     /**
+     * Default constructor
+     */
+    public FileData() {
+    }
+
+    /**
      * @param fileData Byte array of file data
      * @param fileName Name of the file
      */

@@ -83,6 +83,7 @@ public class FileStoreDaoImpl implements FileStoreDao {
                                 FileMetadata fileMetadata = new FileMetadata();
                                 fileMetadata.setFileId(property.getProperty("fileId"));
                                 fileMetadata.setFileName(property.getProperty("fileName"));
+                                fileMetadata.setCreationTime(Long.valueOf(property.getProperty("creationTime")));
                                 fileMetadatas.add(fileMetadata);
                             }
                         } catch (FileNotFoundException e) {
@@ -121,6 +122,7 @@ public class FileStoreDaoImpl implements FileStoreDao {
                             FileMetadata fileMetadata = new FileMetadata();
                             fileMetadata.setFileId(property.getProperty("fileId"));
                             fileMetadata.setFileName(property.getProperty("fileName"));
+                            fileMetadata.setCreationTime(Long.valueOf(property.getProperty("creationTime")));
                             fileMetadatas.add(fileMetadata);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -223,7 +225,6 @@ public class FileStoreDaoImpl implements FileStoreDao {
      *
      * @param file Input file to be stored.
      */
-
     public void saveFiledata(FileData file) throws IOException {
         this.storeDirectoryPath = STORE_DIRECTORY;
         createFileDirectory(file);

@@ -106,12 +106,18 @@ public class SpringBootServiceApplication {
         LOG.info(methodName);
 
         List<FileData> fileDatas = (List<FileData>) fileService.findFileData(fileId, context);
-        response.addHeader("Content-disposition", fileDatas.get(0).getFileName());
+        response.addHeader("Content-disposition", "DownloadFile");
         response.setContentType("txt/plain");
 
-        InputStream inputStream = getInputStream(fileDatas.get(0).getFileData());
-        IOUtils.copy(inputStream, response.getOutputStream());
-        response.flushBuffer();
+        if (fileDatas.size() != 0) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            for (FileData fileData : fileDatas) {
+                outputStream.write(fileData.getFileData());
+            }
+            InputStream inputStream = getInputStream(outputStream.toByteArray());
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        }
     }
 
     /**
